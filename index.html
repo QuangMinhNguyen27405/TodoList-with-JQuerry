@@ -57,9 +57,9 @@
 				let content = 
 				`<div class="content">
 					<input 
-						type="${content_task}" 
+						type="text" 
 						class="text" 
-						value="A new task"
+						value="${content_task}"
 						readonly>
 				</div>
 				`;
@@ -75,10 +75,9 @@
 				let new_task = `<div class="task">${content} ${actions}</div>`;
 
 				$("#tasks").append(new_task);
+
 			}
-
 			let memory = JSON.parse(localStorage.getItem("memory")) || [];
-
 			for(let i = 0; i < memory.length; ++i){
 				//generate saved tasks from local storage
 				let text_content = memory[i];
@@ -87,6 +86,7 @@
 
 			$("#new-task-submit").on("click", function(e){
 				let content_task = $("#new-task-input").val();
+
 				if(content_task.length == 0){
 					alert("Please enter a task to do");
 					return;
@@ -96,15 +96,28 @@
 
 				memory.push(content_task);
 				localStorage.setItem("memory", JSON.stringify(memory));
-				
-			});
+				let button_edit = $(".edit");
+				for(let i = 0; i < button_edit.length; ++i){
+					$(button_edit[i]).on("click", function(){
+						if($(this).text() == "Edit"){
+							$(this).parent().parent().find('input[class*="text"]').removeAttr('readonly');
+							$(this).text("Save");
+						}
+						else if($(this).text() == "Save"){
+							$(this).parent().parent().find('input[class*="text"]').attr("readonly", "readonly");
+							$(this).text("Edit");
+						}
+					})
+				}
 
-			let button_edit = $(".edit");
-			for(let i = 0; i < button_edit.length; ++i){
-				$(button_edit[i]).on("click", function(){
-					console.log($(this).parent().parent().find('input[class*="text"]').text());
-				})
-			}
+				let button_delete = $(".delete");
+				for(let i = 0; i < button_delete.length; ++i){
+					$(button_delete[i]).on("click", function(){
+						memory.splice(i, 1);
+						$(this).parent().parent().remove();
+					});
+				}
+			});
 
 		});
 	</script>
